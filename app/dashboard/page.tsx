@@ -80,24 +80,36 @@ const speakingPracticeTotal = 5;
 
 export default function DashboardPage() {
   const [xp, setXp] = useState(0);
-  const [completedQuestions, setCompletedQuestions] = useState(0);
-  const [completedLessons, setCompletedLessons] = useState(0);
+
+  const [completedQuestions, setCompletedQuestions] =
+    useState(0);
+
+  const [completedLessons, setCompletedLessons] =
+    useState(0);
+
   const [progress, setProgress] = useState(0);
+
   const [lessonProgress, setLessonProgress] = useState<
     Record<string, number>
   >({});
 
   const [vocabularyXP, setVocabularyXP] = useState(0);
-  const [vocabularyCompleted, setVocabularyCompleted] = useState(0);
-  const [vocabularyProgress, setVocabularyProgress] = useState(0);
+  const [vocabularyCompleted, setVocabularyCompleted] =
+    useState(0);
+  const [vocabularyProgress, setVocabularyProgress] =
+    useState(0);
 
   const [listeningXP, setListeningXP] = useState(0);
-  const [listeningCompleted, setListeningCompleted] = useState(0);
-  const [listeningProgress, setListeningProgress] = useState(0);
+  const [listeningCompleted, setListeningCompleted] =
+    useState(0);
+  const [listeningProgress, setListeningProgress] =
+    useState(0);
 
   const [speakingXP, setSpeakingXP] = useState(0);
-  const [speakingCompleted, setSpeakingCompleted] = useState(0);
-  const [speakingProgress, setSpeakingProgress] = useState(0);
+  const [speakingCompleted, setSpeakingCompleted] =
+    useState(0);
+  const [speakingProgress, setSpeakingProgress] =
+    useState(0);
 
   function loadProgress() {
     if (typeof window === "undefined") return;
@@ -145,13 +157,17 @@ export default function DashboardPage() {
 
     const percentage =
       totalQuestions > 0
-        ? Math.round((totalCompleted / totalQuestions) * 100)
+        ? Math.round(
+            (totalCompleted / totalQuestions) * 100
+          )
         : 0;
 
     setProgress(percentage);
 
     const savedVocabularyXP = Number(
-      localStorage.getItem("croatian-easy-vocabulary-xp") || "0"
+      localStorage.getItem(
+        "croatian-easy-vocabulary-xp"
+      ) || "0"
     );
 
     const savedVocabularyCompleted = Number(
@@ -179,7 +195,9 @@ export default function DashboardPage() {
     setVocabularyProgress(vocabularyPercentage);
 
     const savedListeningXP = Number(
-      localStorage.getItem("croatian-easy-listening-xp") || "0"
+      localStorage.getItem(
+        "croatian-easy-listening-xp"
+      ) || "0"
     );
 
     const savedListeningCompleted = Number(
@@ -207,7 +225,9 @@ export default function DashboardPage() {
     setListeningProgress(listeningPercentage);
 
     const savedSpeakingXP = Number(
-      localStorage.getItem("croatian-easy-speaking-xp") || "0"
+      localStorage.getItem(
+        "croatian-easy-speaking-xp"
+      ) || "0"
     );
 
     const savedSpeakingCompleted = Number(
@@ -245,6 +265,11 @@ export default function DashboardPage() {
     window.addEventListener("focus", loadProgress);
 
     window.addEventListener(
+      "storage",
+      loadProgress
+    );
+
+    window.addEventListener(
       "croatian-vocabulary-progress",
       loadProgress
     );
@@ -268,6 +293,11 @@ export default function DashboardPage() {
       );
 
       window.removeEventListener(
+        "storage",
+        loadProgress
+      );
+
+      window.removeEventListener(
         "croatian-vocabulary-progress",
         loadProgress
       );
@@ -284,13 +314,22 @@ export default function DashboardPage() {
     };
   }, []);
 
+  const a1Completed =
+    completedQuestions === totalQuestions &&
+    completedLessons === lessons.length;
+
   return (
     <main className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-blue-950 text-white">
+
+      {/* Header */}
+
       <header className="border-b border-white/10 bg-black/20 backdrop-blur-xl">
+
         <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-5">
+
           <div>
             <h1 className="text-2xl font-bold">
-              Croatian Easy 🇭🇷
+              Mallu2Croatian 🇭🇷
             </h1>
 
             <p className="mt-1 text-sm text-slate-400">
@@ -304,11 +343,17 @@ export default function DashboardPage() {
           >
             Home
           </Link>
+
         </div>
+
       </header>
 
       <div className="mx-auto max-w-7xl px-6 py-10">
+
+        {/* Title */}
+
         <section className="mb-10">
+
           <div className="mb-2 text-sm font-semibold uppercase tracking-wider text-blue-400">
             Learning Dashboard
           </div>
@@ -319,13 +364,18 @@ export default function DashboardPage() {
 
           <p className="mt-3 max-w-2xl text-slate-400">
             Croatian പഠിച്ച് daily practice ചെയ്യൂ.
-            Lessons, Vocabulary, Listening, Speaking, Quiz എന്നിവ
-            ഉപയോഗിച്ച് step by step മുന്നോട്ട് പോകാം.
+            Lessons, Vocabulary, Listening, Speaking, Quiz
+            എന്നിവ ഉപയോഗിച്ച് step by step മുന്നോട്ട് പോകാം.
           </p>
+
         </section>
 
+        {/* Statistics */}
+
         <section className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+
           <div className="rounded-3xl border border-white/10 bg-white/5 p-6 shadow-xl backdrop-blur-xl">
+
             <div className="text-3xl">⭐</div>
 
             <div className="mt-4 text-sm text-slate-400">
@@ -335,9 +385,11 @@ export default function DashboardPage() {
             <div className="mt-1 text-3xl font-bold">
               {xp}
             </div>
+
           </div>
 
           <div className="rounded-3xl border border-white/10 bg-white/5 p-6 shadow-xl backdrop-blur-xl">
+
             <div className="text-3xl">📚</div>
 
             <div className="mt-4 text-sm text-slate-400">
@@ -347,9 +399,11 @@ export default function DashboardPage() {
             <div className="mt-1 text-3xl font-bold">
               {completedLessons}/9
             </div>
+
           </div>
 
           <div className="rounded-3xl border border-white/10 bg-white/5 p-6 shadow-xl backdrop-blur-xl">
+
             <div className="text-3xl">🎯</div>
 
             <div className="mt-4 text-sm text-slate-400">
@@ -359,9 +413,11 @@ export default function DashboardPage() {
             <div className="mt-1 text-3xl font-bold">
               {completedQuestions}/{totalQuestions}
             </div>
+
           </div>
 
           <div className="rounded-3xl border border-white/10 bg-white/5 p-6 shadow-xl backdrop-blur-xl">
+
             <div className="text-3xl">📈</div>
 
             <div className="mt-4 text-sm text-slate-400">
@@ -371,12 +427,19 @@ export default function DashboardPage() {
             <div className="mt-1 text-3xl font-bold">
               {progress}%
             </div>
+
           </div>
+
         </section>
 
+        {/* A1 Progress */}
+
         <section className="mt-8 rounded-3xl border border-blue-400/20 bg-blue-500/10 p-7 shadow-xl">
+
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+
             <div>
+
               <div className="text-sm font-semibold uppercase tracking-wider text-blue-300">
                 A1 Level
               </div>
@@ -388,31 +451,116 @@ export default function DashboardPage() {
               <p className="mt-2 text-sm text-slate-300">
                 {completedLessons} of 9 situations completed
               </p>
+
             </div>
 
             <div className="text-4xl font-black text-blue-300">
               {progress}%
             </div>
+
           </div>
 
           <div className="mt-6 h-4 overflow-hidden rounded-full bg-black/30">
+
             <div
               className="h-full rounded-full bg-blue-500 transition-all duration-500"
               style={{
-                width: String(progress) + "%",
+                width: `${progress}%`,
               }}
             />
+
           </div>
 
           <div className="mt-3 text-right text-xs text-slate-400">
             {completedQuestions} / {totalQuestions} questions
           </div>
+
         </section>
 
-        {/* VOCABULARY */}
+        {/* A1 COMPLETION */}
+
+        {a1Completed && (
+
+          <section className="mt-8 overflow-hidden rounded-3xl border border-emerald-400/30 bg-gradient-to-br from-emerald-500/20 via-blue-500/10 to-purple-500/20 p-7 shadow-xl">
+
+            <div className="text-center">
+
+              <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-emerald-500/20 text-5xl">
+                🎉
+              </div>
+
+              <div className="mt-5 text-sm font-bold uppercase tracking-widest text-emerald-400">
+                A1 Level Completed
+              </div>
+
+              <h3 className="mt-2 text-3xl font-black sm:text-4xl">
+                Croatian A1 Complete!
+              </h3>
+
+              <p className="mx-auto mt-3 max-w-xl text-sm leading-6 text-slate-300">
+                അഭിനന്ദനങ്ങൾ! A1 Croatian-ലെ എല്ലാ 9
+                lessons-ഉം പൂർത്തിയാക്കി.
+              </p>
+
+              <div className="mt-7 grid gap-4 sm:grid-cols-3">
+
+                <div className="rounded-2xl bg-black/20 p-5">
+
+                  <div className="text-3xl font-black text-emerald-400">
+                    9/9
+                  </div>
+
+                  <div className="mt-1 text-xs text-slate-400">
+                    Lessons Completed
+                  </div>
+
+                </div>
+
+                <div className="rounded-2xl bg-black/20 p-5">
+
+                  <div className="text-3xl font-black text-blue-400">
+                    45/45
+                  </div>
+
+                  <div className="mt-1 text-xs text-slate-400">
+                    Questions Completed
+                  </div>
+
+                </div>
+
+                <div className="rounded-2xl bg-black/20 p-5">
+
+                  <div className="text-3xl font-black text-yellow-400">
+                    100%
+                  </div>
+
+                  <div className="mt-1 text-xs text-slate-400">
+                    A1 Progress
+                  </div>
+
+                </div>
+
+              </div>
+
+              <Link
+                href="/situations"
+                className="mt-7 inline-block rounded-2xl bg-emerald-500 px-6 py-3 font-bold text-slate-950 transition hover:bg-emerald-400"
+              >
+                🔄 Practice A1 Again
+              </Link>
+
+            </div>
+
+          </section>
+
+        )}
+
+        {/* Vocabulary */}
 
         <section className="mt-12">
+
           <div className="mb-6">
+
             <div className="text-sm font-semibold uppercase tracking-wider text-blue-400">
               Vocabulary
             </div>
@@ -425,10 +573,13 @@ export default function DashboardPage() {
               100+ Croatian words Malayalam meaning,
               pronunciation, examples എന്നിവയോടെ പഠിക്കാം.
             </p>
+
           </div>
 
           <div className="grid gap-5 lg:grid-cols-3">
+
             <div className="rounded-3xl border border-white/10 bg-white/5 p-6 shadow-xl backdrop-blur-xl">
+
               <div className="text-4xl">📖</div>
 
               <div className="mt-5 text-sm text-slate-400">
@@ -449,9 +600,11 @@ export default function DashboardPage() {
               >
                 Open Vocabulary
               </Link>
+
             </div>
 
             <div className="rounded-3xl border border-white/10 bg-white/5 p-6 shadow-xl backdrop-blur-xl">
+
               <div className="text-4xl">🧠</div>
 
               <div className="mt-5 text-sm text-slate-400">
@@ -473,9 +626,11 @@ export default function DashboardPage() {
               >
                 Practice Vocabulary
               </Link>
+
             </div>
 
             <div className="rounded-3xl border border-white/10 bg-white/5 p-6 shadow-xl backdrop-blur-xl">
+
               <div className="text-4xl">⭐</div>
 
               <div className="mt-5 text-sm text-slate-400">
@@ -487,7 +642,9 @@ export default function DashboardPage() {
               </div>
 
               <div className="mt-5">
+
                 <div className="mb-2 flex items-center justify-between text-xs">
+
                   <span className="text-slate-400">
                     Practice Progress
                   </span>
@@ -495,26 +652,34 @@ export default function DashboardPage() {
                   <span className="font-semibold text-blue-300">
                     {vocabularyProgress}%
                   </span>
+
                 </div>
 
                 <div className="h-2 overflow-hidden rounded-full bg-black/30">
+
                   <div
                     className="h-full rounded-full bg-blue-500 transition-all duration-500"
                     style={{
-                      width:
-                        String(vocabularyProgress) + "%",
+                      width: `${vocabularyProgress}%`,
                     }}
                   />
+
                 </div>
+
               </div>
+
             </div>
+
           </div>
+
         </section>
 
-        {/* LISTENING */}
+        {/* Listening */}
 
         <section className="mt-12">
+
           <div className="mb-6">
+
             <div className="text-sm font-semibold uppercase tracking-wider text-cyan-400">
               Listening
             </div>
@@ -527,10 +692,13 @@ export default function DashboardPage() {
               Croatian കേൾക്കുക → meaning മനസ്സിലാക്കുക →
               answer ചെയ്യുക.
             </p>
+
           </div>
 
           <div className="grid gap-5 lg:grid-cols-3">
+
             <div className="rounded-3xl border border-cyan-400/20 bg-cyan-500/10 p-6 shadow-xl">
+
               <div className="text-4xl">🎧</div>
 
               <div className="mt-5 text-sm text-slate-400">
@@ -552,9 +720,11 @@ export default function DashboardPage() {
               >
                 Start Listening
               </Link>
+
             </div>
 
             <div className="rounded-3xl border border-white/10 bg-white/5 p-6 shadow-xl backdrop-blur-xl">
+
               <div className="text-4xl">⭐</div>
 
               <div className="mt-5 text-sm text-slate-400">
@@ -568,9 +738,11 @@ export default function DashboardPage() {
               <p className="mt-2 text-sm text-slate-500">
                 XP earned from listening practice
               </p>
+
             </div>
 
             <div className="rounded-3xl border border-white/10 bg-white/5 p-6 shadow-xl backdrop-blur-xl">
+
               <div className="text-4xl">📈</div>
 
               <div className="mt-5 text-sm text-slate-400">
@@ -582,22 +754,28 @@ export default function DashboardPage() {
               </div>
 
               <div className="mt-5 h-2 overflow-hidden rounded-full bg-black/30">
+
                 <div
                   className="h-full rounded-full bg-cyan-500 transition-all duration-500"
                   style={{
-                    width:
-                      String(listeningProgress) + "%",
+                    width: `${listeningProgress}%`,
                   }}
                 />
+
               </div>
+
             </div>
+
           </div>
+
         </section>
 
-        {/* SPEAKING */}
+        {/* Speaking */}
 
         <section className="mt-12">
+
           <div className="mb-6">
+
             <div className="text-sm font-semibold uppercase tracking-wider text-orange-400">
               Speaking
             </div>
@@ -610,10 +788,13 @@ export default function DashboardPage() {
               Croatian sentence കേൾക്കുക → microphone ഉപയോഗിച്ച്
               പറയുക → pronunciation check ചെയ്യുക.
             </p>
+
           </div>
 
           <div className="grid gap-5 lg:grid-cols-3">
+
             <div className="rounded-3xl border border-orange-400/20 bg-orange-500/10 p-6 shadow-xl">
+
               <div className="text-4xl">🎤</div>
 
               <div className="mt-5 text-sm text-slate-400">
@@ -635,9 +816,11 @@ export default function DashboardPage() {
               >
                 Start Speaking
               </Link>
+
             </div>
 
             <div className="rounded-3xl border border-white/10 bg-white/5 p-6 shadow-xl backdrop-blur-xl">
+
               <div className="text-4xl">⭐</div>
 
               <div className="mt-5 text-sm text-slate-400">
@@ -651,9 +834,11 @@ export default function DashboardPage() {
               <p className="mt-2 text-sm text-slate-500">
                 XP earned from correct speaking
               </p>
+
             </div>
 
             <div className="rounded-3xl border border-white/10 bg-white/5 p-6 shadow-xl backdrop-blur-xl">
+
               <div className="text-4xl">📈</div>
 
               <div className="mt-5 text-sm text-slate-400">
@@ -665,22 +850,28 @@ export default function DashboardPage() {
               </div>
 
               <div className="mt-5 h-2 overflow-hidden rounded-full bg-black/30">
+
                 <div
                   className="h-full rounded-full bg-orange-500 transition-all duration-500"
                   style={{
-                    width:
-                      String(speakingProgress) + "%",
+                    width: `${speakingProgress}%`,
                   }}
                 />
+
               </div>
+
             </div>
+
           </div>
+
         </section>
 
-        {/* A1 SITUATIONS */}
+        {/* A1 Situations */}
 
         <section className="mt-12">
+
           <div className="mb-6">
+
             <div className="text-sm font-semibold uppercase tracking-wider text-blue-400">
               A1 Situations
             </div>
@@ -690,12 +881,16 @@ export default function DashboardPage() {
             </h3>
 
             <p className="mt-2 text-slate-400">
-              Everyday life situations ഉപയോഗിച്ച് Croatian practice ചെയ്യാം.
+              Everyday life situations ഉപയോഗിച്ച് Croatian
+              practice ചെയ്യാം.
             </p>
+
           </div>
 
           <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+
             {lessons.map((lesson) => {
+
               const completed =
                 lessonProgress[lesson.key] || 0;
 
@@ -709,7 +904,9 @@ export default function DashboardPage() {
                   key={lesson.key}
                   className="group rounded-3xl border border-white/10 bg-white/5 p-6 shadow-xl backdrop-blur-xl transition hover:-translate-y-1 hover:border-blue-400/30 hover:bg-white/10"
                 >
+
                   <div className="flex items-start justify-between">
+
                     <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-white/10 text-3xl">
                       {lesson.icon}
                     </div>
@@ -719,6 +916,7 @@ export default function DashboardPage() {
                         ✓ Completed
                       </div>
                     )}
+
                   </div>
 
                   <h4 className="mt-5 text-xl font-bold">
@@ -730,7 +928,9 @@ export default function DashboardPage() {
                   </p>
 
                   <div className="mt-5">
+
                     <div className="mb-2 flex items-center justify-between text-xs">
+
                       <span className="text-slate-400">
                         Progress
                       </span>
@@ -738,17 +938,20 @@ export default function DashboardPage() {
                       <span className="font-semibold text-blue-300">
                         {completed}/5
                       </span>
+
                     </div>
 
                     <div className="h-2 overflow-hidden rounded-full bg-black/30">
+
                       <div
                         className="h-full rounded-full bg-blue-500 transition-all duration-500"
                         style={{
-                          width:
-                            String(lessonPercentage) + "%",
+                          width: `${lessonPercentage}%`,
                         }}
                       />
+
                     </div>
+
                   </div>
 
                   <Link
@@ -761,16 +964,21 @@ export default function DashboardPage() {
                       ? "Continue Learning"
                       : "Start Lesson"}
                   </Link>
+
                 </div>
               );
             })}
+
           </div>
+
         </section>
 
         {/* CEFR */}
 
         <section className="mt-12">
+
           <div className="mb-6">
+
             <div className="text-sm font-semibold uppercase tracking-wider text-blue-400">
               CEFR Levels
             </div>
@@ -778,14 +986,18 @@ export default function DashboardPage() {
             <h3 className="mt-1 text-3xl font-bold">
               Your Learning Path
             </h3>
+
           </div>
 
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+
             {[
               {
                 level: "A1",
                 title: "Beginner",
-                status: "Available",
+                status: a1Completed
+                  ? "Completed"
+                  : "Available",
                 active: true,
               },
               {
@@ -819,6 +1031,7 @@ export default function DashboardPage() {
                 active: false,
               },
             ].map((item) => (
+
               <div
                 key={item.level}
                 className={
@@ -828,7 +1041,9 @@ export default function DashboardPage() {
                     : "border-white/10 bg-white/5 opacity-70")
                 }
               >
+
                 <div className="flex items-center justify-between">
+
                   <div className="text-3xl font-black">
                     {item.level}
                   </div>
@@ -843,20 +1058,27 @@ export default function DashboardPage() {
                   >
                     {item.status}
                   </div>
+
                 </div>
 
                 <div className="mt-4 text-lg font-bold">
                   {item.title}
                 </div>
+
               </div>
+
             ))}
+
           </div>
+
         </section>
 
-        {/* QUICK ACTIONS */}
+        {/* Quick Actions */}
 
         <section className="mt-12">
+
           <div className="mb-6">
+
             <div className="text-sm font-semibold uppercase tracking-wider text-blue-400">
               Quick Actions
             </div>
@@ -864,9 +1086,11 @@ export default function DashboardPage() {
             <h3 className="mt-1 text-3xl font-bold">
               Keep Learning
             </h3>
+
           </div>
 
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
+
             <Link
               href="/vocabulary"
               className="rounded-3xl border border-blue-400/20 bg-blue-500/10 p-6 transition hover:bg-blue-500/20"
@@ -941,16 +1165,21 @@ export default function DashboardPage() {
                 Daily life situations പഠിക്കാം.
               </p>
             </Link>
+
           </div>
+
         </section>
 
-        {/* TIP */}
+        {/* Learning Tip */}
 
         <section className="mt-12 rounded-3xl border border-yellow-400/20 bg-yellow-500/10 p-6">
+
           <div className="flex gap-4">
+
             <div className="text-3xl">💡</div>
 
             <div>
+
               <h4 className="font-bold text-yellow-300">
                 Learning Tip
               </h4>
@@ -961,10 +1190,15 @@ export default function DashboardPage() {
                 Malayalam meaning നോക്കുക → Croatian answer പറയുക →
                 പിന്നെ speaking practice ചെയ്യുക.
               </p>
+
             </div>
+
           </div>
+
         </section>
+
       </div>
+
     </main>
   );
 }
