@@ -118,13 +118,10 @@ export default function HomePage() {
 
     loadProgress();
 
-    const timer = window.setInterval(() => {
-      loadProgress();
-    }, 1000);
+    const timer = window.setInterval(loadProgress, 1000);
 
     window.addEventListener("focus", loadProgress);
     window.addEventListener("storage", loadProgress);
-
     window.addEventListener("croatian-speaking-progress", loadProgress);
 
     return () => {
@@ -155,62 +152,71 @@ export default function HomePage() {
   );
 
   return (
-    <main className="min-h-screen bg-slate-50 px-4 py-8 text-slate-900">
-      <div className="mx-auto max-w-6xl">
+    <main className="min-h-screen bg-slate-50 text-slate-900">
+      <div className="mx-auto max-w-6xl px-4 py-6 sm:px-6 sm:py-10">
 
         {/* Header */}
         <header className="mb-8">
-          <div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
+          <div className="rounded-3xl bg-white p-6 shadow-sm sm:p-8">
 
-            <div>
-              <p className="mb-2 text-sm font-bold uppercase tracking-wider text-blue-600">
-                Mallu2Croatian
-              </p>
+            <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
 
-              <h1 className="text-4xl font-bold sm:text-5xl">
-                A1 Croatian 🇭🇷
-              </h1>
+              <div>
+                <div className="mb-3 inline-flex items-center rounded-full bg-blue-50 px-3 py-1 text-xs font-bold uppercase tracking-wider text-blue-600">
+                  Mallu2Croatian
+                </div>
 
-              <p className="mt-2 text-lg text-slate-600">
-                മലയാളത്തിൽ എളുപ്പത്തിൽ Croatian പഠിക്കാം
-              </p>
+                <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl">
+                  A1 Croatian 🇭🇷
+                </h1>
+
+                <p className="mt-3 max-w-xl text-base leading-7 text-slate-600 sm:text-lg">
+                  മലയാളത്തിൽ എളുപ്പത്തിൽ Croatian പഠിക്കാം.
+                  <br />
+                  Real-life situations, vocabulary, pronunciation,
+                  quizzes & practice.
+                </p>
+              </div>
+
+              <nav className="flex flex-wrap gap-2">
+                <Link
+                  href="/vocabulary"
+                  className="rounded-xl bg-blue-600 px-4 py-3 text-sm font-bold text-white transition hover:bg-blue-700"
+                >
+                  📚 Vocabulary
+                </Link>
+
+                <Link
+                  href="/situations"
+                  className="rounded-xl bg-slate-900 px-4 py-3 text-sm font-bold text-white transition hover:bg-slate-800"
+                >
+                  🌍 Situations
+                </Link>
+
+                <Link
+                  href="/dashboard"
+                  className="rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm font-bold transition hover:bg-slate-50"
+                >
+                  📊 Dashboard
+                </Link>
+              </nav>
+
             </div>
-
-            <nav className="flex flex-wrap gap-2">
-
-              <Link
-                href="/vocabulary"
-                className="rounded-xl bg-blue-600 px-4 py-2 text-sm font-bold text-white"
-              >
-                📚 Vocabulary
-              </Link>
-
-              <Link
-                href="/situations"
-                className="rounded-xl bg-slate-900 px-4 py-2 text-sm font-bold text-white"
-              >
-                Situations
-              </Link>
-
-              <Link
-                href="/dashboard"
-                className="rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-bold"
-              >
-                Dashboard
-              </Link>
-
-            </nav>
           </div>
         </header>
 
-        {/* A1 Progress */}
-        <section className="mb-8 rounded-3xl bg-white p-6 shadow-sm">
+        {/* Progress */}
+        <section className="mb-8 rounded-3xl bg-white p-6 shadow-sm sm:p-7">
 
-          <div className="flex items-center justify-between gap-4">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
 
             <div>
-              <h2 className="text-xl font-bold">
-                A1 Progress
+              <p className="text-sm font-bold uppercase tracking-wide text-blue-600">
+                Your Progress
+              </p>
+
+              <h2 className="mt-1 text-2xl font-extrabold">
+                A1 Learning Progress
               </h2>
 
               <p className="mt-1 text-sm text-slate-500">
@@ -218,69 +224,82 @@ export default function HomePage() {
               </p>
             </div>
 
-            <div className="text-right">
-
-              <p className="text-3xl font-bold text-blue-600">
+            <div className="sm:text-right">
+              <p className="text-4xl font-extrabold text-blue-600">
                 {percentage}%
               </p>
 
-              <p className="text-xs text-slate-500">
-                {completedQuestions}/{totalQuestions}
+              <p className="text-xs font-medium text-slate-500">
+                {completedQuestions} / {totalQuestions} questions
               </p>
-
             </div>
 
           </div>
 
-          <div className="mt-5 h-4 overflow-hidden rounded-full bg-slate-200">
-
+          <div className="mt-6 h-4 overflow-hidden rounded-full bg-slate-100">
             <div
-              className="h-full rounded-full bg-blue-600 transition-all duration-300"
-              style={{
-                width: percentage + "%",
-              }}
+              className="h-full rounded-full bg-blue-600 transition-all duration-500"
+              style={{ width: `${percentage}%` }}
             />
-
           </div>
 
         </section>
 
-        {/* Vocabulary */}
-        <section className="mb-8">
+        {/* Quick Access */}
+        <section className="mb-8 grid gap-4 sm:grid-cols-2">
 
           <Link
             href="/vocabulary"
-            className="block rounded-3xl bg-white p-6 shadow-sm transition hover:shadow-md"
+            className="group rounded-3xl bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
           >
+            <div className="flex items-center gap-4">
 
-            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-
-              <div className="flex items-center gap-4">
-
-                <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-100 text-3xl">
-                  📚
-                </div>
-
-                <div>
-
-                  <h2 className="text-xl font-bold">
-                    Vocabulary
-                  </h2>
-
-                  <p className="mt-1 text-sm text-slate-500">
-                    Croatian വാക്കുകൾ മലയാളത്തിൽ പഠിക്കാം
-                  </p>
-
-                </div>
-
+              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-50 text-3xl">
+                📚
               </div>
 
-              <div className="rounded-xl bg-blue-600 px-5 py-3 text-center font-bold text-white">
-                Open Vocabulary →
+              <div className="flex-1">
+                <h2 className="text-xl font-extrabold">
+                  Vocabulary
+                </h2>
+
+                <p className="mt-1 text-sm text-slate-500">
+                  Croatian വാക്കുകൾ മലയാളത്തിൽ പഠിക്കാം
+                </p>
               </div>
+
+              <span className="text-xl text-blue-600 transition group-hover:translate-x-1">
+                →
+              </span>
 
             </div>
+          </Link>
 
+          <Link
+            href="/vocabulary/practice"
+            className="group rounded-3xl bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
+          >
+            <div className="flex items-center gap-4">
+
+              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-emerald-50 text-3xl">
+                🧠
+              </div>
+
+              <div className="flex-1">
+                <h2 className="text-xl font-extrabold">
+                  Vocabulary Practice
+                </h2>
+
+                <p className="mt-1 text-sm text-slate-500">
+                  പഠിച്ച വാക്കുകൾ quiz വഴി practice ചെയ്യാം
+                </p>
+              </div>
+
+              <span className="text-xl text-emerald-600 transition group-hover:translate-x-1">
+                →
+              </span>
+
+            </div>
           </Link>
 
         </section>
@@ -288,18 +307,23 @@ export default function HomePage() {
         {/* A1 Lessons */}
         <section>
 
-          <h2 className="mb-2 text-2xl font-bold">
-            A1 Lessons
-          </h2>
+          <div className="mb-5">
+            <p className="text-sm font-bold uppercase tracking-wide text-blue-600">
+              Learn by Situation
+            </p>
 
-          <p className="mb-5 text-sm text-slate-500">
-            Daily life situations ഉപയോഗിച്ച് Croatian പഠിക്കാം.
-          </p>
+            <h2 className="mt-1 text-2xl font-extrabold sm:text-3xl">
+              A1 Lessons
+            </h2>
+
+            <p className="mt-2 text-sm text-slate-500">
+              Daily life situations ഉപയോഗിച്ച് Croatian പഠിക്കാം.
+            </p>
+          </div>
 
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
 
             {lessons.map((lesson) => {
-
               const completed = progress[lesson.key] || 0;
 
               const lessonPercentage = Math.round(
@@ -310,24 +334,24 @@ export default function HomePage() {
                 <Link
                   key={lesson.href}
                   href={lesson.href}
-                  className="rounded-3xl bg-white p-5 shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
+                  className="group rounded-3xl bg-white p-5 shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
                 >
 
                   <div className="flex items-center justify-between">
 
-                    <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-slate-100 text-2xl">
+                    <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-50 text-2xl">
                       {lesson.icon}
                     </div>
 
-                    {completed === 5 ? (
-                      <span className="rounded-full bg-green-100 px-3 py-1 text-xs font-bold text-green-700">
+                    {completed === 5 && (
+                      <span className="rounded-full bg-emerald-50 px-3 py-1 text-xs font-bold text-emerald-700">
                         ✓ Completed
                       </span>
-                    ) : null}
+                    )}
 
                   </div>
 
-                  <h3 className="mt-5 text-lg font-bold">
+                  <h3 className="mt-5 text-lg font-extrabold">
                     {lesson.title}
                   </h3>
 
@@ -335,30 +359,28 @@ export default function HomePage() {
                     {lesson.malayalam}
                   </p>
 
-                  <div className="mt-5 flex justify-between text-xs">
+                  <div className="mt-5 flex items-center justify-between text-xs">
 
-                    <span className="text-slate-500">
+                    <span className="font-medium text-slate-500">
                       Progress
                     </span>
 
-                    <span className="font-bold text-blue-600">
+                    <span className="font-extrabold text-blue-600">
                       {completed}/5
                     </span>
 
                   </div>
 
-                  <div className="mt-2 h-2 overflow-hidden rounded-full bg-slate-200">
-
+                  <div className="mt-2 h-2 overflow-hidden rounded-full bg-slate-100">
                     <div
-                      className="h-full rounded-full bg-blue-600 transition-all duration-300"
+                      className="h-full rounded-full bg-blue-600 transition-all duration-500"
                       style={{
-                        width: lessonPercentage + "%",
+                        width: `${lessonPercentage}%`,
                       }}
                     />
-
                   </div>
 
-                  <p className="mt-4 font-semibold text-blue-600">
+                  <p className="mt-4 font-bold text-blue-600 transition group-hover:translate-x-1">
                     {completed === 5
                       ? "Practice Again →"
                       : completed > 0
@@ -379,49 +401,61 @@ export default function HomePage() {
 
           <Link
             href="/situations"
-            className="block rounded-3xl bg-slate-900 p-6 text-white transition hover:bg-slate-800"
+            className="group block rounded-3xl bg-slate-900 p-6 text-white transition hover:bg-slate-800 sm:p-7"
           >
 
-            <h2 className="text-xl font-bold">
-              🌍 Real-Life Situations
-            </h2>
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
 
-            <p className="mt-2 text-sm text-slate-300">
-              Everyday Croatian situations practice ചെയ്യാം.
-            </p>
+              <div>
+                <p className="text-sm font-bold uppercase tracking-wide text-blue-300">
+                  Practice
+                </p>
 
-            <p className="mt-4 font-bold">
-              Open Situations →
-            </p>
+                <h2 className="mt-1 text-2xl font-extrabold">
+                  🌍 Real-Life Situations
+                </h2>
+
+                <p className="mt-2 text-sm text-slate-300">
+                  Everyday Croatian situations practice ചെയ്യാം.
+                </p>
+              </div>
+
+              <span className="font-extrabold text-white transition group-hover:translate-x-1">
+                Open Situations →
+              </span>
+
+            </div>
 
           </Link>
 
         </section>
 
-        {/* Speaking Practice */}
-        <section className="mt-8 rounded-3xl bg-blue-600 p-6 text-white">
+        {/* Speaking */}
+        <section className="mt-8 rounded-3xl bg-blue-600 p-6 text-white shadow-sm sm:p-7">
 
           <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
 
             <div>
+              <p className="text-sm font-bold uppercase tracking-wide text-blue-100">
+                Speaking
+              </p>
 
-              <h2 className="text-xl font-bold">
+              <h2 className="mt-1 text-2xl font-extrabold">
                 🗣️ Speaking Practice
               </h2>
 
-              <p className="mt-2 text-sm text-blue-100">
+              <p className="mt-2 max-w-xl text-sm text-blue-100">
                 Croatian sentences സംസാരിച്ച് practice ചെയ്യാം.
               </p>
 
               <p className="mt-2 text-xs text-blue-200">
                 {speakingCompleted}/5 speaking exercises completed
               </p>
-
             </div>
 
-            <div className="text-left sm:text-right">
+            <div className="sm:text-right">
 
-              <p className="text-3xl font-bold">
+              <p className="text-4xl font-extrabold">
                 {speakingXP} XP
               </p>
 
@@ -434,19 +468,17 @@ export default function HomePage() {
           </div>
 
           <div className="mt-5 h-2 overflow-hidden rounded-full bg-blue-400/40">
-
             <div
-              className="h-full rounded-full bg-white transition-all duration-300"
+              className="h-full rounded-full bg-white transition-all duration-500"
               style={{
-                width: speakingPercentage + "%",
+                width: `${speakingPercentage}%`,
               }}
             />
-
           </div>
 
           <Link
             href="/a1/greetings"
-            className="mt-5 inline-block rounded-xl bg-white px-5 py-3 font-bold text-blue-600 transition hover:bg-blue-50"
+            className="mt-5 inline-flex items-center rounded-xl bg-white px-5 py-3 font-extrabold text-blue-600 transition hover:bg-blue-50"
           >
             🎤 Practice Speaking →
           </Link>
@@ -456,7 +488,7 @@ export default function HomePage() {
         {/* Footer */}
         <footer className="mt-10 pb-4 text-center">
 
-          <p className="text-sm font-bold text-slate-500">
+          <p className="text-sm font-extrabold text-slate-500">
             Mallu2Croatian 🇮🇳 → 🇭🇷
           </p>
 
