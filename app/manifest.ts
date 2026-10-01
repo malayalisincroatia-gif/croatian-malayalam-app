@@ -2,9 +2,9 @@ import type { MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "Mallu2Croatian",
-    short_name: "Mallu2Croatian",
-    description: "Learn Croatian in Malayalam",
+    name: "Malayalis in Croatia",
+    short_name: "Malayalis in Croatia",
+    description: "Learn Croatian through Malayalam",
     start_url: "/",
     display: "standalone",
     background_color: "#f8fafc",
@@ -13,8 +13,8 @@ export default function manifest(): MetadataRoute.Manifest {
     lang: "ml",
     icons: [
       {
-        src: "/icons/icon-512.png",
-        sizes: "512x512",
+        src: "/icons/icon.png",
+        sizes: "1536x1024",
         type: "image/png",
       },
     ],

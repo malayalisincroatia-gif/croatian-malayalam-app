@@ -13,8 +13,13 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Mallu2Croatian",
-  description: "Learn Croatian in Malayalam",
+  title: "Malayalis in Croatia",
+  description: "Learn Croatian through Malayalam",
+  icons: {
+    icon: "/icons/icon.png",
+    shortcut: "/icons/icon.png",
+    apple: "/icons/icon.png",
+  },
 };
 
 export default function RootLayout({
