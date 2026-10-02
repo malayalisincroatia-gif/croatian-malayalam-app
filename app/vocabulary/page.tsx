@@ -866,8 +866,10 @@ export default function VocabularyPage() {
     window.speechSynthesis.cancel();
 
     const utterance = new SpeechSynthesisUtterance(text);
+
     utterance.lang = "hr-HR";
     utterance.rate = 0.85;
+    utterance.pitch = 1;
 
     window.speechSynthesis.speak(utterance);
   }
@@ -887,6 +889,7 @@ export default function VocabularyPage() {
           margin: "0 auto",
         }}
       >
+        {/* HEADER */}
         <div
           style={{
             display: "flex",
@@ -945,6 +948,7 @@ export default function VocabularyPage() {
           </a>
         </div>
 
+        {/* SEARCH + CATEGORIES */}
         <div
           style={{
             background: "#ffffff",
@@ -1005,6 +1009,7 @@ export default function VocabularyPage() {
           </div>
         </div>
 
+        {/* WORD COUNT */}
         <div
           style={{
             marginBottom: "15px",
@@ -1015,6 +1020,7 @@ export default function VocabularyPage() {
           Showing {filteredVocabulary.length} words
         </div>
 
+        {/* NO RESULTS */}
         {filteredVocabulary.length === 0 ? (
           <div
             style={{
@@ -1031,9 +1037,12 @@ export default function VocabularyPage() {
               No words found
             </h2>
 
-            <p>Try another Croatian or Malayalam word.</p>
+            <p>
+              Try another Croatian or Malayalam word.
+            </p>
           </div>
         ) : (
+          /* VOCABULARY GRID */
           <div
             style={{
               display: "grid",
@@ -1045,7 +1054,13 @@ export default function VocabularyPage() {
             {filteredVocabulary.map(function (item, index) {
               return (
                 <div
-                  key={item.category + "-" + item.croatian + "-" + index}
+                  key={
+                    item.category +
+                    "-" +
+                    item.croatian +
+                    "-" +
+                    index
+                  }
                   style={{
                     background: "#ffffff",
                     borderRadius: "18px",
@@ -1055,6 +1070,7 @@ export default function VocabularyPage() {
                     border: "1px solid #e2e8f0",
                   }}
                 >
+                  {/* CATEGORY */}
                   <div
                     style={{
                       display: "inline-block",
@@ -1070,6 +1086,7 @@ export default function VocabularyPage() {
                     {item.category}
                   </div>
 
+                  {/* WORD + WORD AUDIO */}
                   <div
                     style={{
                       display: "flex",
@@ -1104,7 +1121,9 @@ export default function VocabularyPage() {
                       onClick={function () {
                         speak(item.croatian);
                       }}
-                      aria-label={"Listen to " + item.croatian}
+                      aria-label={
+                        "Listen to " + item.croatian
+                      }
                       style={{
                         border: "none",
                         background: "#eff6ff",
@@ -1113,12 +1132,14 @@ export default function VocabularyPage() {
                         height: "44px",
                         fontSize: "20px",
                         cursor: "pointer",
+                        flexShrink: 0,
                       }}
                     >
                       🔊
                     </button>
                   </div>
 
+                  {/* MALAYALAM MEANING */}
                   <div
                     style={{
                       fontSize: "21px",
@@ -1130,6 +1151,7 @@ export default function VocabularyPage() {
                     {item.malayalam}
                   </div>
 
+                  {/* EXAMPLE SECTION */}
                   <div
                     style={{
                       marginTop: "18px",
@@ -1143,26 +1165,62 @@ export default function VocabularyPage() {
                         fontSize: "13px",
                         fontWeight: "800",
                         color: "#475569",
-                        marginBottom: "5px",
+                        marginBottom: "8px",
                       }}
                     >
                       Example
                     </div>
 
+                    {/* EXAMPLE + EXAMPLE AUDIO */}
                     <div
                       style={{
-                        color: "#0f172a",
-                        fontWeight: "700",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "space-between",
+                        gap: "10px",
                       }}
                     >
-                      {item.example}
+                      <div
+                        style={{
+                          color: "#0f172a",
+                          fontWeight: "700",
+                          lineHeight: "1.5",
+                          flex: 1,
+                        }}
+                      >
+                        {item.example}
+                      </div>
+
+                      <button
+                        onClick={function () {
+                          speak(item.example);
+                        }}
+                        aria-label={
+                          "Listen to example " +
+                          item.example
+                        }
+                        style={{
+                          border: "none",
+                          background: "#dbeafe",
+                          borderRadius: "50%",
+                          width: "42px",
+                          height: "42px",
+                          fontSize: "19px",
+                          cursor: "pointer",
+                          flexShrink: 0,
+                        }}
+                      >
+                        🔊
+                      </button>
                     </div>
 
+                    {/* EXAMPLE MALAYALAM */}
                     <div
                       style={{
-                        marginTop: "5px",
+                        marginTop: "7px",
                         color: "#64748b",
                         fontSize: "14px",
+                        lineHeight: "1.5",
                       }}
                     >
                       {item.exampleMalayalam}

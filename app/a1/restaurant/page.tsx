@@ -69,7 +69,7 @@ export default function RestaurantPage() {
   const [selected, setSelected] = useState("");
   const [xp, setXp] = useState(0);
   const [completed, setCompleted] = useState<number[]>([]);
-  const [speaking, setSpeaking] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(false);
 
   useEffect(() => {
     const savedXP = Number(localStorage.getItem(XP_KEY) || "0");
@@ -96,14 +96,18 @@ export default function RestaurantPage() {
   function listen(text: string) {
     if (typeof window === "undefined") return;
 
+    if (!("speechSynthesis" in window)) return;
+
     window.speechSynthesis.cancel();
 
     const utterance = new SpeechSynthesisUtterance(text);
+
     utterance.lang = "hr-HR";
     utterance.rate = 0.85;
 
-    utterance.onstart = () => setSpeaking(true);
-    utterance.onend = () => setSpeaking(false);
+    utterance.onstart = () => setIsPlaying(true);
+    utterance.onend = () => setIsPlaying(false);
+    utterance.onerror = () => setIsPlaying(false);
 
     window.speechSynthesis.speak(utterance);
   }
@@ -138,8 +142,12 @@ export default function RestaurantPage() {
     return (
       <main className="min-h-screen bg-slate-950 text-white p-6">
         <div className="max-w-3xl mx-auto">
+
           <div className="bg-white/10 rounded-3xl p-8 text-center">
-            <div className="text-6xl mb-4">🎉</div>
+
+            <div className="text-6xl mb-4">
+              🎉
+            </div>
 
             <h1 className="text-3xl font-bold mb-3">
               Restaurant Lesson Complete!
@@ -154,6 +162,7 @@ export default function RestaurantPage() {
             </div>
 
             <div className="flex flex-wrap justify-center gap-3">
+
               <Link
                 href="/situations"
                 className="px-5 py-3 rounded-xl bg-blue-600 hover:bg-blue-700"
@@ -167,8 +176,11 @@ export default function RestaurantPage() {
               >
                 Dashboard
               </Link>
+
             </div>
+
           </div>
+
         </div>
       </main>
     );
@@ -186,9 +198,11 @@ export default function RestaurantPage() {
 
   return (
     <main className="min-h-screen bg-slate-950 text-white p-4 md:p-8">
+
       <div className="max-w-4xl mx-auto">
 
         <div className="flex items-center justify-between mb-6">
+
           <Link
             href="/situations"
             className="text-slate-300 hover:text-white"
@@ -199,29 +213,40 @@ export default function RestaurantPage() {
           <div className="text-yellow-400 font-bold">
             ⭐ {xp} XP
           </div>
+
         </div>
 
         <div className="mb-6">
+
           <div className="flex justify-between text-sm text-slate-400 mb-2">
-            <span>🇭🇷 A1 • Restaurant</span>
+
+            <span>
+              🇭🇷 A1 • Restaurant
+            </span>
+
             <span>
               {current + 1} / {questions.length}
             </span>
+
           </div>
 
           <div className="w-full h-3 bg-slate-800 rounded-full overflow-hidden">
+
             <div
               className="h-full bg-blue-500 transition-all"
               style={{
                 width: `${((current + 1) / questions.length) * 100}%`,
               }}
             />
+
           </div>
+
         </div>
 
         <section className="bg-white text-slate-900 rounded-3xl p-6 md:p-10 shadow-2xl">
 
           <div className="mb-8">
+
             <div className="text-sm font-semibold text-blue-600 mb-3">
               SITUATION • RESTAURANT
             </div>
@@ -237,13 +262,16 @@ export default function RestaurantPage() {
             <p className="text-lg text-slate-500">
               🗣️ {question.pronunciation}
             </p>
+
           </div>
 
           <button
             onClick={() => listen(question.croatian)}
             className="w-full md:w-auto px-6 py-4 rounded-2xl bg-blue-600 text-white font-bold hover:bg-blue-700 mb-8"
           >
-            {speaking ? "🔊 Playing..." : "🔊 Listen Croatian"}
+            {isPlaying
+              ? "🔊 Playing..."
+              : "🔊 Listen Croatian"}
           </button>
 
           <div className="border-t pt-8">
@@ -253,6 +281,7 @@ export default function RestaurantPage() {
             </h2>
 
             <div className="grid gap-3">
+
               {choices.map((choice) => (
                 <button
                   key={choice}
@@ -266,6 +295,7 @@ export default function RestaurantPage() {
                   {choice}
                 </button>
               ))}
+
             </div>
 
             <button
@@ -279,6 +309,7 @@ export default function RestaurantPage() {
               <div className="mt-6">
 
                 <div className="rounded-2xl bg-green-50 border border-green-200 p-5">
+
                   <div className="text-sm text-green-700 font-semibold mb-2">
                     CORRECT ANSWER
                   </div>
@@ -290,14 +321,17 @@ export default function RestaurantPage() {
                   <div className="text-green-700 mt-2">
                     +10 XP
                   </div>
+
                 </div>
 
                 <div className="mt-6">
+
                   <h3 className="font-bold text-lg mb-3">
                     Word Breakdown
                   </h3>
 
                   <div className="grid gap-2">
+
                     {question.words.map(([word, meaning]) => (
                       <div
                         key={word}
@@ -312,31 +346,40 @@ export default function RestaurantPage() {
                         </span>
                       </div>
                     ))}
+
                   </div>
+
                 </div>
 
                 {current < questions.length - 1 ? (
+
                   <button
                     onClick={nextQuestion}
                     className="mt-6 w-full py-4 rounded-xl bg-slate-900 text-white font-bold hover:bg-slate-800"
                   >
                     Next Question →
                   </button>
+
                 ) : (
+
                   <button
                     onClick={() => setCurrent(questions.length)}
                     className="mt-6 w-full py-4 rounded-xl bg-purple-600 text-white font-bold hover:bg-purple-700"
                   >
                     Complete Lesson 🎉
                   </button>
+
                 )}
 
               </div>
             )}
 
           </div>
+
         </section>
+
       </div>
+
     </main>
   );
 }

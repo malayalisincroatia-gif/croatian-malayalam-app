@@ -1,6 +1,6 @@
 ﻿"use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 
 const XP_KEY = "croatian-easy-xp";
@@ -73,15 +73,7 @@ export default function SupermarketPage() {
   const [selected, setSelected] = useState("");
   const [xp, setXp] = useState(0);
   const [completed, setCompleted] = useState<number[]>([]);
-  const [speaking, setSpeaking] = useState(false);
-
-  const [isRecording, setIsRecording] = useState(false);
-  const [isTranscribing, setIsTranscribing] = useState(false);
-  const [spokenText, setSpokenText] = useState("");
-  const [speechResult, setSpeechResult] = useState("");
-
-  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
-  const audioChunksRef = useRef<Blob[]>([]);
+  const [isPlaying, setIsPlaying] = useState(false);
 
   useEffect(() => {
     const savedXP = Number(
@@ -113,6 +105,10 @@ export default function SupermarketPage() {
   }
 
   function listen(text: string) {
+    if (typeof window === "undefined") return;
+
+    if (!("speechSynthesis" in window)) return;
+
     window.speechSynthesis.cancel();
 
     const utterance =
@@ -122,14 +118,20 @@ export default function SupermarketPage() {
     utterance.rate = 0.85;
 
     utterance.onstart = () => {
-      setSpeaking(true);
+      setIsPlaying(true);
     };
 
     utterance.onend = () => {
-      setSpeaking(false);
+      setIsPlaying(false);
     };
 
-    window.speechSynthesis.speak(utterance);
+    utterance.onerror = () => {
+      setIsPlaying(false);
+    };
+
+    window.speechSynthesis.speak(
+      utterance
+    );
   }
 
   function showCorrectAnswer() {
@@ -155,303 +157,20 @@ export default function SupermarketPage() {
   function nextQuestion() {
     setShowAnswer(false);
     setSelected("");
-    setSpokenText("");
-    setSpeechResult("");
 
     if (current < questions.length - 1) {
       setCurrent(current + 1);
     }
   }
 
-  async function startRecording() {
-    try {
-      if (
-        !navigator.mediaDevices ||
-        !navigator.mediaDevices.getUserMedia
-      ) {
-        setSpeechResult(
-          "❌ ഈ browser microphone recording support ചെയ്യുന്നില്ല."
-        );
-        return;
-      }
-
-      const stream =
-        await navigator.mediaDevices.getUserMedia({
-          audio: true,
-        });
-
-      audioChunksRef.current = [];
-
-      let mimeType = "";
-
-      if (
-        MediaRecorder.isTypeSupported(
-          "audio/webm;codecs=opus"
-        )
-      ) {
-        mimeType =
-          "audio/webm;codecs=opus";
-      } else if (
-        MediaRecorder.isTypeSupported(
-          "audio/webm"
-        )
-      ) {
-        mimeType = "audio/webm";
-      }
-
-      const recorder = mimeType
-        ? new MediaRecorder(stream, {
-            mimeType,
-          })
-        : new MediaRecorder(stream);
-
-      mediaRecorderRef.current = recorder;
-
-      recorder.ondataavailable = (
-        event: BlobEvent
-      ) => {
-        if (event.data.size > 0) {
-          audioChunksRef.current.push(
-            event.data
-          );
-        }
-      };
-
-      recorder.onerror = (event) => {
-        console.error(
-          "MediaRecorder error:",
-          event
-        );
-
-        setSpeechResult(
-          "❌ Audio recording error."
-        );
-      };
-
-      recorder.onstop = async () => {
-        stream
-          .getTracks()
-          .forEach((track) => {
-            track.stop();
-          });
-
-        const audioType =
-          recorder.mimeType ||
-          "audio/webm";
-
-        const audioBlob = new Blob(
-          audioChunksRef.current,
-          {
-            type: audioType,
-          }
-        );
-
-        console.log(
-          "Recorded audio:",
-          {
-            size: audioBlob.size,
-            type: audioBlob.type,
-          }
-        );
-
-        await sendAudioToOpenAI(
-          audioBlob
-        );
-      };
-
-      recorder.start();
-
-      setIsRecording(true);
-      setSpokenText("");
-      setSpeechResult(
-        "🎤 കേൾക്കുന്നു... Croatian sentence പറയൂ."
-      );
-    } catch (error) {
-      console.error(
-        "Microphone error:",
-        error
-      );
-
-      setSpeechResult(
-        "❌ Microphone permission denied അല്ലെങ്കിൽ microphone unavailable."
-      );
-    }
-  }
-
-  function stopRecording() {
-    const recorder =
-      mediaRecorderRef.current;
-
-    if (
-      recorder &&
-      recorder.state !== "inactive"
-    ) {
-      recorder.stop();
-    }
-
-    setIsRecording(false);
-  }
-
-  async function sendAudioToOpenAI(
-    audioBlob: Blob
-  ) {
-    try {
-      setIsTranscribing(true);
-
-      setSpeechResult(
-        "⏳ Croatian speech പരിശോധിക്കുന്നു..."
-      );
-
-      if (
-        !audioBlob ||
-        audioBlob.size === 0
-      ) {
-        setSpeechResult(
-          "❌ Audio record ആയിട്ടില്ല. വീണ്ടും try ചെയ്യൂ."
-        );
-        return;
-      }
-
-      console.log(
-        "Sending audio:",
-        {
-          size: audioBlob.size,
-          type: audioBlob.type,
-        }
-      );
-
-      const formData = new FormData();
-
-      const audioFile = new File(
-        [audioBlob],
-        "audio.webm",
-        {
-          type: "audio/webm",
-        }
-      );
-
-      formData.append(
-        "audio",
-        audioFile
-      );
-
-      const response = await fetch(
-        "/api/transcribe",
-        {
-          method: "POST",
-          body: formData,
-        }
-      );
-
-      const rawResponse =
-        await response.text();
-
-      console.log(
-        "API status:",
-        response.status
-      );
-
-      console.log(
-        "API response:",
-        rawResponse
-      );
-
-      let data: {
-        text?: string;
-        error?: string;
-      } = {};
-
-      try {
-        data =
-          JSON.parse(rawResponse);
-      } catch {
-        data = {
-          error:
-            rawResponse ||
-            "Invalid API response.",
-        };
-      }
-
-      if (!response.ok) {
-        throw new Error(
-          data.error ||
-            `Transcription failed (${response.status})`
-        );
-      }
-
-      const text = (
-        data.text || ""
-      ).trim();
-
-      setSpokenText(text);
-
-      if (!text) {
-        setSpeechResult(
-          "❌ Speech detect ചെയ്യാൻ കഴിഞ്ഞില്ല. വീണ്ടും വ്യക്തമായി പറയൂ."
-        );
-        return;
-      }
-
-      const spoken = text
-        .toLowerCase()
-        .trim()
-        .replace(/[.,!?]/g, "")
-        .replace(/\s+/g, " ");
-
-      const expected =
-        questions[current].answer
-          .toLowerCase()
-          .trim()
-          .replace(/[.,!?]/g, "")
-          .replace(/\s+/g, " ");
-
-      console.log(
-        "Spoken:",
-        spoken
-      );
-
-      console.log(
-        "Expected:",
-        expected
-      );
-
-      if (spoken === expected) {
-        setSpeechResult(
-          "✅ വളരെ നല്ലത്! Croatian answer ശരിയാണ്."
-        );
-      } else {
-        setSpeechResult(
-          "🟡 Speech ലഭിച്ചു. ശരിയായ sentence വീണ്ടും പറയാൻ ശ്രമിക്കൂ."
-        );
-      }
-    } catch (
-      error: unknown
-    ) {
-      console.error(
-        "SPEAKING PRACTICE ERROR:",
-        error
-      );
-
-      const message =
-        error instanceof Error
-          ? error.message
-          : "Unknown transcription error.";
-
-      setSpeechResult(
-        `❌ Transcription error: ${message}`
-      );
-    } finally {
-      setIsTranscribing(false);
-    }
-  }
-
-  if (
-    current >= questions.length
-  ) {
+  if (current >= questions.length) {
     return (
       <main className="min-h-screen bg-slate-950 text-white p-6">
+
         <div className="max-w-3xl mx-auto">
+
           <div className="bg-white/10 rounded-3xl p-8 text-center">
+
             <div className="text-6xl mb-4">
               🎉
             </div>
@@ -469,6 +188,7 @@ export default function SupermarketPage() {
             </div>
 
             <div className="flex flex-wrap justify-center gap-3">
+
               <Link
                 href="/situations"
                 className="px-5 py-3 rounded-xl bg-blue-600 hover:bg-blue-700"
@@ -482,15 +202,18 @@ export default function SupermarketPage() {
               >
                 Dashboard
               </Link>
+
             </div>
+
           </div>
+
         </div>
+
       </main>
     );
   }
 
-  const question =
-    questions[current];
+  const question = questions[current];
 
   const choices = [
     question.answer,
@@ -507,9 +230,11 @@ export default function SupermarketPage() {
 
   return (
     <main className="min-h-screen bg-slate-950 text-white p-4 md:p-8">
+
       <div className="max-w-4xl mx-auto">
 
         <div className="flex items-center justify-between mb-6">
+
           <Link
             href="/situations"
             className="text-slate-300 hover:text-white"
@@ -520,21 +245,25 @@ export default function SupermarketPage() {
           <div className="text-yellow-400 font-bold">
             ⭐ {xp} XP
           </div>
+
         </div>
 
         <div className="mb-6">
+
           <div className="flex justify-between text-sm text-slate-400 mb-2">
+
             <span>
               🇭🇷 A1 • Supermarket
             </span>
 
             <span>
-              {current + 1} /{" "}
-              {questions.length}
+              {current + 1} / {questions.length}
             </span>
+
           </div>
 
           <div className="w-full h-3 bg-slate-800 rounded-full overflow-hidden">
+
             <div
               className="h-full bg-blue-500 transition-all"
               style={{
@@ -545,12 +274,15 @@ export default function SupermarketPage() {
                 }%`,
               }}
             />
+
           </div>
+
         </div>
 
         <section className="bg-white text-slate-900 rounded-3xl p-6 md:p-10 shadow-2xl">
 
           <div className="mb-8">
+
             <div className="text-sm font-semibold text-blue-600 mb-3">
               SITUATION • SUPERMARKET
             </div>
@@ -564,85 +296,21 @@ export default function SupermarketPage() {
             </p>
 
             <p className="text-lg text-slate-500">
-              🗣️{" "}
-              {question.pronunciation}
+              🗣️ {question.pronunciation}
             </p>
+
           </div>
 
           <button
             onClick={() =>
-              listen(
-                question.croatian
-              )
+              listen(question.croatian)
             }
             className="w-full md:w-auto px-6 py-4 rounded-2xl bg-blue-600 text-white font-bold hover:bg-blue-700 mb-8"
           >
-            {speaking
+            {isPlaying
               ? "🔊 Playing..."
               : "🔊 Listen Croatian"}
           </button>
-
-          <div className="border-2 border-purple-200 bg-purple-50 rounded-2xl p-5 mb-8">
-
-            <div className="text-sm font-bold text-purple-700 mb-2">
-              🎤 SPEAKING PRACTICE
-            </div>
-
-            <h2 className="text-xl font-bold mb-2">
-              Say the Croatian answer
-            </h2>
-
-            <p className="text-slate-600 mb-4">
-              താഴെയുള്ള button അമർത്തി Croatian answer പറയുക.
-            </p>
-
-            {!isRecording ? (
-              <button
-                onClick={
-                  startRecording
-                }
-                disabled={
-                  isTranscribing
-                }
-                className="w-full py-4 rounded-xl bg-purple-600 text-white font-bold hover:bg-purple-700 disabled:opacity-50"
-              >
-                🎤 Start Speaking
-              </button>
-            ) : (
-              <button
-                onClick={
-                  stopRecording
-                }
-                className="w-full py-4 rounded-xl bg-red-600 text-white font-bold hover:bg-red-700 animate-pulse"
-              >
-                ⏹ Stop & Check
-              </button>
-            )}
-
-            {isTranscribing && (
-              <div className="mt-4 p-4 rounded-xl bg-white text-purple-700 font-semibold">
-                ⏳ Listening & checking Croatian speech...
-              </div>
-            )}
-
-            {spokenText && (
-              <div className="mt-4 p-4 rounded-xl bg-white border">
-                <div className="text-sm text-slate-500 mb-1">
-                  YOUR SPEECH
-                </div>
-
-                <div className="text-lg font-bold">
-                  {spokenText}
-                </div>
-              </div>
-            )}
-
-            {speechResult && (
-              <div className="mt-4 p-4 rounded-xl bg-white border font-semibold break-words">
-                {speechResult}
-              </div>
-            )}
-          </div>
 
           <div className="border-t pt-8">
 
@@ -651,18 +319,16 @@ export default function SupermarketPage() {
             </h2>
 
             <div className="grid gap-3">
+
               {choices.map(
                 (choice) => (
                   <button
                     key={choice}
                     onClick={() =>
-                      setSelected(
-                        choice
-                      )
+                      setSelected(choice)
                     }
                     className={`text-left p-4 rounded-xl border-2 transition ${
-                      selected ===
-                      choice
+                      selected === choice
                         ? "border-blue-600 bg-blue-50"
                         : "border-slate-200 hover:border-blue-300"
                     }`}
@@ -671,6 +337,7 @@ export default function SupermarketPage() {
                   </button>
                 )
               )}
+
             </div>
 
             <button
@@ -686,6 +353,7 @@ export default function SupermarketPage() {
               <div className="mt-6">
 
                 <div className="rounded-2xl bg-green-50 border border-green-200 p-5">
+
                   <div className="text-sm text-green-700 font-semibold mb-2">
                     CORRECT ANSWER
                   </div>
@@ -697,19 +365,19 @@ export default function SupermarketPage() {
                   <div className="text-green-700 mt-2">
                     +10 XP
                   </div>
+
                 </div>
 
                 <div className="mt-6">
+
                   <h3 className="font-bold text-lg mb-3">
                     Word Breakdown
                   </h3>
 
                   <div className="grid gap-2">
+
                     {question.words.map(
-                      ([
-                        word,
-                        meaning,
-                      ]) => (
+                      ([word, meaning]) => (
                         <div
                           key={word}
                           className="flex justify-between p-3 rounded-xl bg-slate-100"
@@ -724,12 +392,14 @@ export default function SupermarketPage() {
                         </div>
                       )
                     )}
+
                   </div>
+
                 </div>
 
                 {current <
-                questions.length -
-                  1 ? (
+                questions.length - 1 ? (
+
                   <button
                     onClick={
                       nextQuestion
@@ -738,7 +408,9 @@ export default function SupermarketPage() {
                   >
                     Next Question →
                   </button>
+
                 ) : (
+
                   <button
                     onClick={() =>
                       setCurrent(
@@ -749,12 +421,18 @@ export default function SupermarketPage() {
                   >
                     Complete Lesson 🎉
                   </button>
+
                 )}
+
               </div>
             )}
+
           </div>
+
         </section>
+
       </div>
+
     </main>
   );
 }

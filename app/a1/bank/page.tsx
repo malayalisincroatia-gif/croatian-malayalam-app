@@ -70,7 +70,7 @@ export default function BankPage() {
   const [selected, setSelected] = useState("");
   const [xp, setXp] = useState(0);
   const [completed, setCompleted] = useState<number[]>([]);
-  const [speaking, setSpeaking] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(false);
 
   useEffect(() => {
     const savedXP = Number(localStorage.getItem(XP_KEY) || "0");
@@ -97,14 +97,18 @@ export default function BankPage() {
   function listen(text: string) {
     if (typeof window === "undefined") return;
 
+    if (!("speechSynthesis" in window)) return;
+
     window.speechSynthesis.cancel();
 
     const utterance = new SpeechSynthesisUtterance(text);
+
     utterance.lang = "hr-HR";
     utterance.rate = 0.85;
 
-    utterance.onstart = () => setSpeaking(true);
-    utterance.onend = () => setSpeaking(false);
+    utterance.onstart = () => setIsPlaying(true);
+    utterance.onend = () => setIsPlaying(false);
+    utterance.onerror = () => setIsPlaying(false);
 
     window.speechSynthesis.speak(utterance);
   }
@@ -205,6 +209,7 @@ export default function BankPage() {
         <div className="mb-6">
           <div className="flex justify-between text-sm text-slate-400 mb-2">
             <span>🇭🇷 A1 • Bank</span>
+
             <span>
               {current + 1} / {questions.length}
             </span>
@@ -244,7 +249,7 @@ export default function BankPage() {
             onClick={() => listen(question.croatian)}
             className="w-full md:w-auto px-6 py-4 rounded-2xl bg-blue-600 text-white font-bold hover:bg-blue-700 mb-8"
           >
-            {speaking ? "🔊 Playing..." : "🔊 Listen Croatian"}
+            {isPlaying ? "🔊 Playing..." : "🔊 Listen Croatian"}
           </button>
 
           <div className="border-t pt-8">
