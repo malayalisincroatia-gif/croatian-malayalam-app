@@ -13,9 +13,9 @@ const questions = [
     pronunciation: "ഗ്ദ്യേ യെ പൊലിത്സിയ്സ്കാ പോസ്റ്റായാ?",
     answer: "Policijska postaja je tamo.",
     words: [
-      ["Gdje", "എവിടെ"],
-      ["policijska postaja", "പോലീസ് സ്റ്റേഷൻ"],
-      ["tamo", "അവിടെ"],
+      ["Gdje", "എവിടെ", "ഗ്ദ്യേ"],
+      ["policijska postaja", "പോലീസ് സ്റ്റേഷൻ", "പൊലിത്സിയ്സ്കാ പോസ്റ്റായാ"],
+      ["tamo", "അവിടെ", "താമോ"],
     ],
   },
   {
@@ -24,9 +24,9 @@ const questions = [
     pronunciation: "ത്രെബാം പ്രൊദുഴിതി ബൊറാവാക്.",
     answer: "Trebam produžiti boravak.",
     words: [
-      ["Trebam", "എനിക്ക് വേണം"],
-      ["produžiti", "നീട്ടാൻ"],
-      ["boravak", "താമസം / താമസാനുമതി"],
+      ["Trebam", "എനിക്ക് വേണം", "ത്രെബാം"],
+      ["produžiti", "നീട്ടാൻ", "പ്രൊദുഴിതി"],
+      ["boravak", "താമസം / താമസാനുമതി", "ബൊറാവാക്"],
     ],
   },
   {
@@ -35,8 +35,8 @@ const questions = [
     pronunciation: "ഇമാം തെർമിൻ.",
     answer: "Imam termin.",
     words: [
-      ["Imam", "എനിക്ക് ഉണ്ട്"],
-      ["termin", "അപ്പോയിന്റ്മെന്റ്"],
+      ["Imam", "എനിക്ക് ഉണ്ട്", "ഇമാം"],
+      ["termin", "അപ്പോയിന്റ്മെന്റ്", "തെർമിൻ"],
     ],
   },
   {
@@ -45,9 +45,9 @@ const questions = [
     pronunciation: "കൊയെ ദൊകുമെന്റെ ത്രെബാം?",
     answer: "Trebate putovnicu i boravišnu iskaznicu.",
     words: [
-      ["Koje", "ഏത്"],
-      ["dokumente", "രേഖകൾ"],
-      ["trebam", "എനിക്ക് വേണം"],
+      ["Koje", "ഏത്", "കൊയെ"],
+      ["dokumente", "രേഖകൾ", "ദൊകുമെന്റെ"],
+      ["trebam", "എനിക്ക് വേണം", "ത്രെബാം"],
     ],
   },
   {
@@ -56,10 +56,10 @@ const questions = [
     pronunciation: "ഗ്ദ്യേ മോഗു പ്രെദാതി സാഹ്ത്യെവ്?",
     answer: "Zahtjev možete predati ovdje.",
     words: [
-      ["Gdje", "എവിടെ"],
-      ["mogu", "എനിക്ക് കഴിയും"],
-      ["predati", "സമർപ്പിക്കാൻ"],
-      ["zahtjev", "അപേക്ഷ"],
+      ["Gdje", "എവിടെ", "ഗ്ദ്യേ"],
+      ["mogu", "എനിക്ക് കഴിയും", "മോഗു"],
+      ["predati", "സമർപ്പിക്കാൻ", "പ്രെദാതി"],
+      ["zahtjev", "അപേക്ഷ", "സാഹ്ത്യെവ്"],
     ],
   },
 ];
@@ -79,11 +79,17 @@ export default function MupPage() {
 
     setXp(savedXP);
 
-    const savedCompleted = JSON.parse(
-      localStorage.getItem(COMPLETE_KEY) || "[]"
-    );
+    try {
+      const savedCompleted = JSON.parse(
+        localStorage.getItem(COMPLETE_KEY) || "[]"
+      );
 
-    setCompleted(savedCompleted);
+      if (Array.isArray(savedCompleted)) {
+        setCompleted(savedCompleted);
+      }
+    } catch {
+      setCompleted([]);
+    }
   }, []);
 
   function addXP(amount: number) {
@@ -102,13 +108,9 @@ export default function MupPage() {
   }
 
   function listen(text: string) {
-    if (typeof window === "undefined") {
-      return;
-    }
+    if (typeof window === "undefined") return;
 
-    if (!("speechSynthesis" in window)) {
-      return;
-    }
+    if (!("speechSynthesis" in window)) return;
 
     window.speechSynthesis.cancel();
 
@@ -130,12 +132,12 @@ export default function MupPage() {
       setIsPlaying(false);
     };
 
-    window.speechSynthesis.speak(
-      utterance
-    );
+    window.speechSynthesis.speak(utterance);
   }
 
   function showCorrectAnswer() {
+    if (showAnswer) return;
+
     setShowAnswer(true);
 
     if (!completed.includes(current)) {
@@ -158,6 +160,7 @@ export default function MupPage() {
   function nextQuestion() {
     setShowAnswer(false);
     setSelected("");
+    setIsPlaying(false);
 
     if (current < questions.length - 1) {
       setCurrent(current + 1);
@@ -166,40 +169,44 @@ export default function MupPage() {
 
   if (current >= questions.length) {
     return (
-      <main className="min-h-screen bg-slate-950 text-white p-6">
+      <main className="min-h-screen bg-gradient-to-br from-slate-950 via-blue-950 to-slate-900 px-4 py-8 text-white">
 
-        <div className="max-w-3xl mx-auto">
+        <div className="mx-auto max-w-3xl">
 
-          <div className="bg-white/10 rounded-3xl p-8 text-center">
+          <div className="rounded-3xl border border-white/10 bg-white/10 p-8 text-center shadow-2xl backdrop-blur md:p-10">
 
-            <div className="text-6xl mb-4">
+            <div className="text-6xl">
               🎉
             </div>
 
-            <h1 className="text-3xl font-bold mb-3">
+            <div className="mt-5 inline-flex rounded-full bg-blue-500/20 px-4 py-2 text-sm font-bold text-blue-300">
+              A1 • MUP
+            </div>
+
+            <h1 className="mt-4 text-3xl font-black md:text-4xl">
               MUP Lesson Complete!
             </h1>
 
-            <p className="text-slate-300 mb-6">
+            <p className="mt-3 text-slate-300">
               അഭിനന്ദനങ്ങൾ! MUP lesson പൂർത്തിയായി.
             </p>
 
-            <div className="text-yellow-400 text-2xl font-bold mb-8">
+            <div className="mx-auto mt-7 inline-flex rounded-2xl bg-yellow-400/10 px-6 py-4 text-2xl font-black text-yellow-300">
               ⭐ XP: {xp}
             </div>
 
-            <div className="flex flex-wrap justify-center gap-3">
+            <div className="mt-8 flex flex-wrap justify-center gap-3">
 
               <Link
                 href="/situations"
-                className="px-5 py-3 rounded-xl bg-blue-600 hover:bg-blue-700"
+                className="rounded-xl bg-blue-600 px-5 py-3 font-bold transition hover:bg-blue-700"
               >
                 All Situations
               </Link>
 
               <Link
                 href="/dashboard"
-                className="px-5 py-3 rounded-xl bg-green-600 hover:bg-green-700"
+                className="rounded-xl bg-green-600 px-5 py-3 font-bold transition hover:bg-green-700"
               >
                 Dashboard
               </Link>
@@ -220,177 +227,237 @@ export default function MupPage() {
     question.answer,
     ...questions
       .filter(
-        (_, index) =>
-          index !== current
+        (_, index) => index !== current
       )
       .slice(0, 2)
-      .map(
-        (item) => item.answer
-      ),
+      .map((item) => item.answer),
   ].sort();
 
+  const progress =
+    ((current + 1) / questions.length) * 100;
+
   return (
-    <main className="min-h-screen bg-slate-950 text-white p-4 md:p-8">
+    <main className="min-h-screen bg-gradient-to-br from-slate-950 via-blue-950 to-slate-900 px-4 py-6 text-white md:px-8 md:py-8">
 
-      <div className="max-w-4xl mx-auto">
+      <div className="mx-auto max-w-4xl">
 
-        <div className="flex items-center justify-between mb-6">
+        {/* HEADER */}
+        <div className="mb-6 flex items-center justify-between">
 
           <Link
             href="/situations"
-            className="text-slate-300 hover:text-white"
+            className="font-semibold text-slate-300 transition hover:text-white"
           >
             ← Situations
           </Link>
 
-          <div className="text-yellow-400 font-bold">
+          <div className="rounded-full bg-yellow-400/10 px-4 py-2 font-bold text-yellow-300">
             ⭐ {xp} XP
           </div>
 
         </div>
 
+        {/* PROGRESS */}
         <div className="mb-6">
 
-          <div className="flex justify-between text-sm text-slate-400 mb-2">
+          <div className="mb-2 flex items-center justify-between text-sm">
 
-            <span>
+            <span className="font-semibold text-slate-300">
               🇭🇷 A1 • MUP
             </span>
 
-            <span>
+            <span className="text-slate-400">
               {current + 1} / {questions.length}
             </span>
 
           </div>
 
-          <div className="w-full h-3 bg-slate-800 rounded-full overflow-hidden">
+          <div className="h-3 overflow-hidden rounded-full bg-slate-800">
 
             <div
-              className="h-full bg-blue-500 transition-all"
+              className="h-full rounded-full bg-blue-500 transition-all duration-300"
               style={{
-                width: `${
-                  ((current + 1) /
-                    questions.length) *
-                  100
-                }%`,
+                width: `${progress}%`,
               }}
             />
 
           </div>
 
+          <div className="mt-2 text-right text-xs text-slate-500">
+            {Math.round(progress)}% complete
+          </div>
+
         </div>
 
-        <section className="bg-white text-slate-900 rounded-3xl p-6 md:p-10 shadow-2xl">
+        {/* LESSON */}
+        <section className="rounded-3xl bg-white p-6 text-slate-900 shadow-2xl md:p-10">
 
+          {/* QUESTION */}
           <div className="mb-8">
 
-            <div className="text-sm font-semibold text-blue-600 mb-3">
+            <div className="mb-4 inline-flex rounded-full bg-blue-100 px-4 py-2 text-sm font-bold text-blue-700">
               SITUATION • MUP
             </div>
 
-            <h1 className="text-4xl md:text-5xl font-bold mb-5">
+            <h1 className="text-4xl font-black leading-tight md:text-5xl">
               {question.croatian}
             </h1>
 
-            <p className="text-2xl mb-3">
+            <p className="mt-4 text-2xl text-slate-700">
               {question.malayalam}
             </p>
 
-            <p className="text-lg text-slate-500">
-              🗣️ {question.pronunciation}
-            </p>
+            <div className="mt-3 inline-flex rounded-xl bg-purple-50 px-4 py-2 font-semibold text-purple-700">
+              {question.pronunciation}
+            </div>
 
           </div>
 
+          {/* LISTEN */}
           <button
+            type="button"
             onClick={() =>
               listen(question.croatian)
             }
-            className="w-full md:w-auto px-6 py-4 rounded-2xl bg-blue-600 text-white font-bold hover:bg-blue-700 mb-8"
+            className="w-full rounded-2xl bg-purple-600 px-6 py-4 font-black text-white shadow-lg transition hover:bg-purple-700 active:scale-[0.99] md:w-auto"
           >
             {isPlaying
               ? "🔊 Playing..."
               : "🔊 Listen Croatian"}
           </button>
 
-          <div className="border-t pt-8">
+          <p className="mt-3 text-sm text-slate-500">
+            Croatian pronunciation കേൾക്കാൻ Listen അമർത്തുക.
+          </p>
 
-            <h2 className="text-xl font-bold mb-4">
+          {/* ANSWERS */}
+          <div className="mt-8 border-t border-slate-200 pt-8">
+
+            <h2 className="text-xl font-black">
               Choose the correct answer
             </h2>
 
-            <div className="grid gap-3">
+            <p className="mt-1 text-sm text-slate-500">
+              ശരിയായ Croatian answer തിരഞ്ഞെടുക്കുക.
+            </p>
 
-              {choices.map(
-                (choice) => (
-                  <button
-                    key={choice}
-                    onClick={() =>
-                      setSelected(choice)
+            <div className="mt-4 grid gap-3">
+
+              {choices.map((choice) => (
+
+                <button
+                  type="button"
+                  key={choice}
+                  onClick={() => {
+                    if (!showAnswer) {
+                      setSelected(choice);
                     }
-                    className={`text-left p-4 rounded-xl border-2 transition ${
-                      selected === choice
-                        ? "border-blue-600 bg-blue-50"
-                        : "border-slate-200 hover:border-blue-300"
-                    }`}
-                  >
-                    {choice}
-                  </button>
-                )
-              )}
+                  }}
+                  className={`rounded-xl border-2 p-4 text-left font-semibold transition ${
+                    selected === choice
+                      ? "border-blue-600 bg-blue-50 text-blue-900"
+                      : "border-slate-200 bg-white hover:border-blue-300 hover:bg-blue-50/50"
+                  }`}
+                >
+                  {choice}
+                </button>
+
+              ))}
 
             </div>
 
-            <button
-              onClick={
-                showCorrectAnswer
-              }
-              className="mt-5 w-full py-4 rounded-xl bg-green-600 text-white font-bold hover:bg-green-700"
-            >
-              Show Correct Answer
-            </button>
+            {!showAnswer && (
+
+              <button
+                type="button"
+                onClick={showCorrectAnswer}
+                className="mt-5 w-full rounded-2xl bg-green-600 py-4 text-lg font-black text-white transition hover:bg-green-700 active:scale-[0.99]"
+              >
+                👀 Show Correct Answer
+              </button>
+
+            )}
 
             {showAnswer && (
+
               <div className="mt-6">
 
-                <div className="rounded-2xl bg-green-50 border border-green-200 p-5">
+                {/* CORRECT ANSWER */}
+                <div className="rounded-2xl border-2 border-green-200 bg-green-50 p-5">
 
-                  <div className="text-sm text-green-700 font-semibold mb-2">
-                    CORRECT ANSWER
+                  <div className="text-sm font-black uppercase tracking-wide text-green-700">
+                    Correct Answer
                   </div>
 
-                  <div className="text-2xl font-bold text-green-900">
+                  <div className="mt-2 text-2xl font-black text-green-900">
                     {question.answer}
                   </div>
 
-                  <div className="text-green-700 mt-2">
-                    +10 XP
+                  <div className="mt-2 font-bold text-green-700">
+                    ⭐ +10 XP
                   </div>
+
+                  <button
+                    type="button"
+                    onClick={() =>
+                      listen(question.answer)
+                    }
+                    className="mt-4 rounded-xl bg-green-600 px-5 py-3 font-bold text-white transition hover:bg-green-700 active:scale-95"
+                  >
+                    🔊 Listen Again
+                  </button>
 
                 </div>
 
-                <div className="mt-6">
+                {/* WORD BREAKDOWN */}
+                <div className="mt-7">
 
-                  <h3 className="font-bold text-lg mb-3">
+                  <h3 className="text-xl font-black">
                     Word Breakdown
                   </h3>
 
-                  <div className="grid gap-2">
+                  <div className="mt-4 grid gap-3">
 
                     {question.words.map(
-                      ([word, meaning]) => (
+                      ([word, meaning, pronunciation]) => (
+
                         <div
                           key={word}
-                          className="flex justify-between p-3 rounded-xl bg-slate-100"
+                          className="rounded-2xl border border-slate-200 bg-slate-50 p-4"
                         >
-                          <span className="font-semibold">
-                            {word}
-                          </span>
 
-                          <span className="text-slate-600">
-                            {meaning}
-                          </span>
+                          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+
+                            <div>
+
+                              <div className="text-lg font-black text-slate-900">
+                                {word}
+                              </div>
+
+                              <div className="text-slate-600">
+                                {meaning}
+                              </div>
+
+                            </div>
+
+                            <div className="font-semibold text-purple-600">
+                              {pronunciation}
+                            </div>
+
+                          </div>
+
+                          <button
+                            type="button"
+                            onClick={() =>
+                              listen(word)
+                            }
+                            className="mt-3 rounded-lg bg-purple-100 px-3 py-2 text-sm font-bold text-purple-700 transition hover:bg-purple-200 active:scale-95"
+                          >
+                            🔊 Listen
+                          </button>
+
                         </div>
+
                       )
                     )}
 
@@ -398,14 +465,13 @@ export default function MupPage() {
 
                 </div>
 
-                {current <
-                questions.length - 1 ? (
+                {/* NEXT */}
+                {current < questions.length - 1 ? (
 
                   <button
-                    onClick={
-                      nextQuestion
-                    }
-                    className="mt-6 w-full py-4 rounded-xl bg-slate-900 text-white font-bold hover:bg-slate-800"
+                    type="button"
+                    onClick={nextQuestion}
+                    className="mt-7 w-full rounded-2xl bg-blue-600 py-4 text-lg font-black text-white transition hover:bg-blue-700 active:scale-[0.99]"
                   >
                     Next Question →
                   </button>
@@ -413,12 +479,11 @@ export default function MupPage() {
                 ) : (
 
                   <button
+                    type="button"
                     onClick={() =>
-                      setCurrent(
-                        questions.length
-                      )
+                      setCurrent(questions.length)
                     }
-                    className="mt-6 w-full py-4 rounded-xl bg-purple-600 text-white font-bold hover:bg-purple-700"
+                    className="mt-7 w-full rounded-2xl bg-purple-600 py-4 text-lg font-black text-white transition hover:bg-purple-700 active:scale-[0.99]"
                   >
                     Complete Lesson 🎉
                   </button>
@@ -426,6 +491,7 @@ export default function MupPage() {
                 )}
 
               </div>
+
             )}
 
           </div>
