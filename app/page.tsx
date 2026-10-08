@@ -172,7 +172,7 @@ export default function HomePage() {
 
               <div>
                 <div className="mb-3 inline-flex items-center rounded-full bg-blue-50 px-3 py-1 text-xs font-bold uppercase tracking-wider text-blue-600">
-                  Malayalis in Croatia
+                  Mallu2Croatian
                 </div>
 
                 <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl">
@@ -187,11 +187,20 @@ export default function HomePage() {
               </div>
 
               <nav className="flex flex-wrap gap-2">
+
                 <Link
                   href="/vocabulary"
                   className="rounded-xl bg-blue-600 px-4 py-3 text-sm font-bold text-white transition hover:bg-blue-700"
                 >
                   📚 Vocabulary
+                </Link>
+
+                {/* NEW: Croatian Alphabet */}
+                <Link
+                  href="/alphabet"
+                  className="rounded-xl bg-amber-500 px-4 py-3 text-sm font-bold text-white transition hover:bg-amber-600"
+                >
+                  🇭🇷 Alphabet
                 </Link>
 
                 <Link
@@ -214,6 +223,7 @@ export default function HomePage() {
                 >
                   📊 Dashboard
                 </Link>
+
               </nav>
 
             </div>
@@ -263,6 +273,7 @@ export default function HomePage() {
         {/* Quick Access */}
         <section className="mb-8 grid gap-4 sm:grid-cols-3">
 
+          {/* Vocabulary */}
           <Link
             href="/vocabulary"
             className="group rounded-3xl bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
@@ -290,6 +301,7 @@ export default function HomePage() {
             </div>
           </Link>
 
+          {/* Numbers */}
           <Link
             href="/numbers"
             className="group rounded-3xl bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
@@ -317,6 +329,7 @@ export default function HomePage() {
             </div>
           </Link>
 
+          {/* Vocabulary Practice */}
           <Link
             href="/vocabulary/practice"
             className="group rounded-3xl bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
@@ -473,7 +486,7 @@ export default function HomePage() {
         <footer className="mt-10 pb-4 text-center">
 
           <p className="text-sm font-extrabold text-slate-500">
-            Malayalis in Croatia 🇮🇳 → 🇭🇷
+            Mallu2Croatian 🇮🇳 → 🇭🇷
           </p>
 
           <p className="mt-1 text-xs text-slate-400">
